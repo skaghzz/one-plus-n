@@ -6,7 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,7 +15,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 public class SavingsAccount {
     @Id
     @GeneratedValue
@@ -26,9 +24,8 @@ public class SavingsAccount {
     @Column(name = "NAME")
     private String name;
 
-    @Column(name = "BALANCE")
-    private BigDecimal balance = new BigDecimal(0);
-
-    @ManyToOne
-    private Customer customer;
+    @Builder
+    public SavingsAccount(String name) {
+        this.name = name;
+    }
 }
