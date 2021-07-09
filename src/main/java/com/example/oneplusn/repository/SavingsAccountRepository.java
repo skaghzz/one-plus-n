@@ -4,6 +4,6 @@ import com.example.oneplusn.domain.SavingsAccount;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SavginsAccountRepository extends JpaRepository<SavingsAccount, Long> {
+public interface SavingsAccountRepository extends JpaRepository<SavingsAccount, Long> {
 
 }
