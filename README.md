@@ -23,6 +23,17 @@ N+1(1+N) 문제는 ORM을 사용하면 가장 쉽게 접할 수 있는 문제 �
 문제보단 해결에 집중하도록 하겠다.
 
 ## 해결 방법
+### 1. fetch join
+```java
+@Query("select c from Customer c join fetch c.savingsAccount")
+    public List<Customer> findAllFetchJoin();
+```
+```
+Hibernate: select customer0_.id as id1_0_0_, savingsacc1_.id as id1_1_1_, customer0_.name as name2_0_0_, savingsacc1_.customer_id as customer3_1_1_, savingsacc1_.name as name2_1_1_, savingsacc1_.id as id1_1_0__ from customer customer0_ inner join savings_account savingsacc1_ on customer0_.id=savingsacc1_.id
+```
+
+### 2. ee
+
 
 ## 참고
 (https://incheol-jung.gitbook.io/docs/q-and-a/spring/n+1)
