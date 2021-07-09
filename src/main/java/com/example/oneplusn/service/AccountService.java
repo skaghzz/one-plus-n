@@ -24,14 +24,23 @@ public class AccountService {
         this.savingsAccountRepository = savingsAccountRepository;
     }
 
-    public void findAllSavginsAccountFetchJoin() {
-        customerRepository.findAllFetchJoin();
+    public int findAllSavginsAccountFetchJoin() {
+        return customerRepository.findAllFetchJoin().size();
+    }
+
+    public int findAllBatchSize() {
+        List<Customer> customers = customerRepository.findAll();
+        for (int i = 0; i < customers.size(); i++) {
+            System.out.println(i);
+            customers.get(i).getSavingsAccount2().size();
+        }
+        return customers.size();
     }
 
     public void insertData() {
         System.out.println("insert data");
         List<SavingsAccount> accounts = new ArrayList<SavingsAccount>();
-        for (int i = 1; i <= 100; i++) {
+        for (int i = 1; i <= 10; i++) {
             Customer customer = Customer.builder().name(i + "번 사람").build();
             customerRepository.save(customer);
             for (int j = 1; j <= 10; j++) {

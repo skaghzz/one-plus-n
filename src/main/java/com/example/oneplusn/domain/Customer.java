@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.BatchSize;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,9 +29,14 @@ public class Customer {
     @Column(name = "NAME")
     private String name;
 
-    //@OneToMany(mappedBy = "id", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    // @OneToMany(mappedBy = "id", fetch = FetchType.LAZY, cascade =
+    // CascadeType.ALL)
     @OneToMany(mappedBy = "id", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<SavingsAccount> savingsAccount = new ArrayList<>();
+
+    @BatchSize(size = 5)
+    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<SavingsAccount> savingsAccount2 = new ArrayList<>();
 
     @Builder
     public Customer(String name) {

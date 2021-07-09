@@ -22,7 +22,12 @@ public class AccountController {
     }
 
     @GetMapping(value = "/account/fetchjoin")
-    public void findAllAccountFetchJoin() {
-        accountService.findAllSavginsAccountFetchJoin();
+    public int findAllAccountFetchJoin() {
+        return accountService.findAllSavginsAccountFetchJoin();
+    }
+
+    @GetMapping(value = "/account/batchsize")
+    public int findAllBatchSize() {
+        return accountService.findAllBatchSize();
     }
 }

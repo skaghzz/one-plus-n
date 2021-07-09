@@ -28,24 +28,52 @@ n+1 자체가 발생하는 이유가 한쪽 테이블만 조회하고 연결된 
 두 테이블을 join하여 한번에 모든 데이터를 가져올 수 있다면 n+1 문제가 발생하지 않을것이다.   
 그렇게 나온 해결 방법이 fetchJoin 방법이다.
 두 테이블을 join하는 쿼리를 작성하는 것이다.
+
+다음과 같이 JPQL을 직접 지정해준다.   
+일대다 조인이므로 DISTINCT를 이용해 중복을 제거하는 것이 좋다.
 ```java
 @Query("select DISTINCT c from Customer c join fetch c.savingsAccount")
     public List<Customer> findAllFetchJoin();
 ```
-다음과 같이 JPQL을 직접 지정해준다.
+
+결과적으로 한번에 쿼리를 날리는 것을 확인 할 수 있다.   
 ```
 Hibernate: select customer0_.id as id1_0_0_, savingsacc1_.id as id1_1_1_, customer0_.name as name2_0_0_, savingsacc1_.customer_id as customer3_1_1_, savingsacc1_.name as name2_1_1_, savingsacc1_.id as id1_1_0__ from customer customer0_ inner join savings_account savingsacc1_ on customer0_.id=savingsacc1_.id
 ```
-결과적으로 한번에 쿼리를 날리는 것을 확인 할 수 있다.   
-일대다 조인이므로 DISTINCT를 이용해 중복을 제거하는 것이 좋다.
+
 
 #### 문제점
 - 쿼리 한번에 모든 데이터를 다 가져오다보니 페이징 기능을 이용할 수 없다
 
 
 ### 2. hibernate BatchSize
-BatchSize 엔티티를 이용하면 지정한 사이즈만큼 SQL의 IN 절을 사용해서 조회한다.
+BatchSize 엔티티를 이용하면 지정한 사이즈만큼 SQL의 IN 절을 사용해서 조회한다.   
+batchSize 만큼 미리 로딩해 뒀다가, 사이즈를 초과할 때 다음 SQL을 실행한다.
+
+```java
+    @BatchSize(size = 5)
+    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<SavingsAccount> savingsAccount2 = new ArrayList<>();
+```
+batchSize마다 쿼리를 날리는 것을 확인할 수 있다.
+```
+0
+Hibernate: select savingsacc0_.id as id1_1_1_, savingsacc0_.id as id1_1_0_, savingsacc0_.customer_id as customer3_1_0_, savingsacc0_.name as name2_1_0_ from savings_account savingsacc0_ where savingsacc0_.id in (?, ?, ?, ?, ?)
+1
+2
+3
+4
+5
+Hibernate: select savingsacc0_.id as id1_1_1_, savingsacc0_.id as id1_1_0_, savingsacc0_.customer_id as customer3_1_0_, savingsacc0_.name as name2_1_0_ from savings_account savingsacc0_ where savingsacc0_.id in (?, ?, ?, ?, ?)
+6
+7
+8
+9
+```
+
+### 3. SUBSELECT
+
 
 ## 참고
-(https://incheol-jung.gitbook.io/docs/q-and-a/spring/n+1)
-JPA 프로그래밍 - 김영한 저
+- https://incheol-jung.gitbook.io/docs/q-and-a/spring/n+1
+- JPA 프로그래밍 - 김영한 저
