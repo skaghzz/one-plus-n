@@ -30,4 +30,9 @@ public class AccountController {
     public int findAllBatchSize() {
         return accountService.findAllBatchSize();
     }
+
+    @GetMapping(value = "/account/subselect")
+    public int findAllSubSelect() {
+        return accountService.findAllSubSelect();
+    }
 }

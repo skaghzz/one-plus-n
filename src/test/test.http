@@ -5,3 +5,11 @@ POST http://localhost:8080/account
 GET http://localhost:8080/account/fetchjoin
 
 ###
+
+GET http://localhost:8080/account/batchsize
+
+###
+
+GET http://localhost:8080/account/subselect
+
+###

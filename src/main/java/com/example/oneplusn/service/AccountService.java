@@ -37,6 +37,15 @@ public class AccountService {
         return customers.size();
     }
 
+    public int findAllSubSelect() {
+        List<Customer> customers = customerRepository.findAll();
+        for (int i = 0; i < customers.size(); i++) {
+            System.out.println(i);
+            customers.get(i).getSavingsAccount3().size();
+        }
+        return customers.size();
+    }
+
     public void insertData() {
         System.out.println("insert data");
         List<SavingsAccount> accounts = new ArrayList<SavingsAccount>();

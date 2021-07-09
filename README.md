@@ -41,12 +41,10 @@ n+1 자체가 발생하는 이유가 한쪽 테이블만 조회하고 연결된 
 Hibernate: select customer0_.id as id1_0_0_, savingsacc1_.id as id1_1_1_, customer0_.name as name2_0_0_, savingsacc1_.customer_id as customer3_1_1_, savingsacc1_.name as name2_1_1_, savingsacc1_.id as id1_1_0__ from customer customer0_ inner join savings_account savingsacc1_ on customer0_.id=savingsacc1_.id
 ```
 
-
 #### 문제점
 - 쿼리 한번에 모든 데이터를 다 가져오다보니 페이징 기능을 이용할 수 없다
 
-
-### 2. hibernate BatchSize
+### 2. BatchSize
 BatchSize 엔티티를 이용하면 지정한 사이즈만큼 SQL의 IN 절을 사용해서 조회한다.   
 batchSize 만큼 미리 로딩해 뒀다가, 사이즈를 초과할 때 다음 SQL을 실행한다.
 
@@ -72,7 +70,32 @@ Hibernate: select savingsacc0_.id as id1_1_1_, savingsacc0_.id as id1_1_0_, savi
 ```
 
 ### 3. SUBSELECT
+FetchMode를 SUBSELECT로 사용하면 연관된 데이터를 조회할 때 쿼리를 사용해서 N+1 문제를 해결한다.   
+필요할 때 fetch join을 하는 것이라 생각하면 된다.
+```java
+    @Fetch(FetchMode.SUBSELECT)
+    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<SavingsAccount> savingsAccount3 = new ArrayList<>();
+```
+```
+Hibernate: select customer0_.id as id1_0_, customer0_.name as name2_0_ from customer customer0_
+0
+Hibernate: select savingsacc0_.id as id1_1_1_, savingsacc0_.id as id1_1_0_, savingsacc0_.customer_id as customer3_1_0_, savingsacc0_.name as name2_1_0_ from savings_account savingsacc0_ where savingsacc0_.id in (select customer0_.id from customer customer0_)
+1
+2
+3
+4
+5
+6
+7
+8
+9
+```
 
+## 결론
+- 즉시 로딩과 지연 로딩 중 지연 로딩을 사용하는 것을 추천
+- 성능 최적화가 필요한 곳에는 JPQL 페치 조인을 사용한다.
+- OneToOne, ManyToOne은 즉시 로딩이 기본이므로 지연 로딩 전략으로 변경해서 사용하도록 한다.
 
 ## 참고
 - https://incheol-jung.gitbook.io/docs/q-and-a/spring/n+1
